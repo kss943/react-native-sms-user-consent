@@ -44,13 +44,22 @@ public class ReactNativeSmsUserConsentModule extends ReactContextBaseJavaModule 
         SmsRetriever.getClient(getCurrentActivity()).startSmsUserConsent(null);
 
         broadcastReceiver = new SmsBroadcastReceiver(getCurrentActivity(), this);
-        getCurrentActivity().registerReceiver(
-            broadcastReceiver,
-            new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION),
-            SmsRetriever.SEND_PERMISSION,
-            null
-        );
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getCurrentActivity().registerReceiver(
+                broadcastReceiver,
+                new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION),
+                SmsRetriever.SEND_PERMISSION,
+                null,
+                Context.RECEIVER_EXPORTED
+            );
+        } else {
+            getCurrentActivity().registerReceiver(
+                broadcastReceiver,
+                new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION),
+                SmsRetriever.SEND_PERMISSION,
+                null
+            );
+        }
         reactContext.addActivityEventListener(listener);
     }
 
